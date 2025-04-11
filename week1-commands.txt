@@ -1,0 +1,20 @@
+How to Run and Test
+
+Build and start the containers:
+bashCopydocker-compose up -d
+
+Test the URL shortener:
+bashCopychmod +x test_shortener.sh
+./test_shortener.sh
+
+Manual testing with curl:
+bashCopy# Shorten a URL
+curl -X POST -H "Content-Type: application/json" \
+  -d '{"url":"https://www.example.com/long/path"}' \
+  http://localhost:5000/shorten
+
+# Use the returned short_code to test redirection
+curl -L http://localhost:5000/{short_code}
+
+Verify container status:
+bashCopydocker ps
