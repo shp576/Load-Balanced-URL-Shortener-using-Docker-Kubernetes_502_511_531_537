@@ -1,35 +1,65 @@
-## Week 1: Build the URL Shortener in Docker
+## Week 2: Deploy the URL Shortener using Kubernetes
 
-This folder contains the basic URL shortener service implemented in Python Flask and containerized using Docker.
+This folder contains the Kubernetes configuration files for deploying the URL shortener application.
 
 ## File Structure
 
 ```
-week1/
-├── app/
-│   ├── app.py              # Main Flask application
-│   ├── requirements.txt    # Python dependencies
-│   └── Dockerfile          # Container definition
-├── docker-compose.yml      # Docker compose for local testing
-└── README.md               # Documentation
+week2/
+├── k8s/
+│   ├── url-shortener-deployment.yaml  # URL shortener pod configuration
+│   ├── url-shortener-service.yaml     # Service to expose URL shortener
+│   ├── redis-deployment.yaml          # Redis pod configuration
+│   ├── redis-service.yaml             # ClusterIP service for Redis
+│   ├── configmap.yaml                 # Configuration values
+│   └── secret.yaml                    # Sensitive configuration
+└── README.md                          # Documentation
 ```
 
-## How to Run
+## How to run
 
-1. Build and start the containers:
-   ```
-   docker-compose up -d
-   ```
+1. Navigate to week1 directory first
+cd ../week1
 
-2. Test the API:
-   ```
-   # Create a shortened URL
-   curl -X POST -H "Content-Type: application/json" -d '{"url":"https://www.example.com"}' http://localhost:5000/shorten
+
+2. Build and load the URL shortener Docker image to your cluster:
    
-   # Use the returned short URL in your browser to verify redirection
-   ```
+   eval $(minikube docker-env)
+   docker build -t url-shortener:latest ./app
 
-3. Stop the containers:
-   ```
-   docker-compose down
-   ```
+# Navigate back to week2 to continue with Kubernetes deployment
+cd ../week2
+
+3. Apply the Redis deployment and service:
+   
+   kubectl apply -f k8s/redis-deployment.yaml
+   kubectl apply -f k8s/redis-service.yaml
+   
+
+4. Apply the ConfigMap and Secret:
+   
+   kubectl apply -f k8s/configmap.yaml
+   kubectl apply -f k8s/secret.yaml
+
+5. Apply the URL shortener deployment and service:
+  
+   kubectl apply -f k8s/url-shortener-deployment.yaml
+   kubectl apply -f k8s/url-shortener-service.yaml
+  
+
+6. Check the deployment status:
+  
+   kubectl get pods
+   kubectl get services
+   
+
+7. Test the service:
+   
+   
+   minikube service url-shortener-service --url
+
+   ## To test your URL shortener from your Ubuntu terminal
+
+   curl -X POST http://127.0.0.1:35487/shorten \
+     -H "Content-Type: application/json" \
+     -d '{"url": "https://example.com"}'
