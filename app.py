@@ -1,4 +1,3 @@
-# app.py
 import os
 import string
 import random
@@ -66,7 +65,6 @@ def redirect_to_url(short_code):
 def health_check():
     """Health check endpoint for Kubernetes."""
     try:
-        # Check Redis connection
         redis_client.ping()
         return jsonify({'status': 'healthy'}), 200
     except:
